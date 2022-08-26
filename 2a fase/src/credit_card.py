@@ -15,7 +15,7 @@ def write_file(path, data_size, exp, neurons, model, array):
         file.write(f'{model.neurons},')
         file.write(f'{count_weights(model)},')
         for i in range(6):
-            file.write(f'{array[:, i].sum()/len(array)},')
+            file.write(f'{array[i]},')
         file.write('\n')
         file.close()
 
@@ -26,50 +26,45 @@ data[['fea_2']] = (imp.transform(data[['fea_2']]))
 
 if __name__ == "__main__":
 
-    qnt_experiments = 6
+    qnt_experiments = 5
+    neurons = 8
     val_size = 0.3
-    n_repeat = 5
+    losses_acc = []
     data_size = 0
     path = '../results/experiments - credit card 1.csv'
 
     for exp in range(1, qnt_experiments+1):
-        if exp%5 == 0 or exp == 1:
-            neurons = 1
 
-            for k in range(7):
-                neurons *= 2
-                mean_data = []
+        tf.keras.backend.clear_session()
+        model = Model(data, neurons)
+        train_size = 0.5
+        n_epochs = 50
+        lr = 0.0001
+        class_first = True
 
-                for rpt in range(n_repeat):
-                    print(f'{rpt}/{n_repeat} \n\n')
+        experiment = Experiment(model,
+                                n_epochs,
+                                lr,
+                                train_size,
+                                val_size,
+                                data,
+                                class_first)
 
-                    tf.keras.backend.clear_session()
-                    model = Model(data, neurons)
-                    train_size = exp/10
-                    n_epochs = 50
-                    lr = 0.0001
-                    class_first = True
+        experiment.fit()
+        
+        
+        # err, acc = experiment.get_evaluate()
+        
+        # losses_acc.append([experiment.save_losses_val()[-1],
+        #                 experiment.save_losses_train()[-1],
+        #                 experiment.save_acuraccys_val()[-1],
+        #                 experiment.save_acuraccys_train()[-1],
+        #                 err,
+        #                 acc])
 
-                    experiment = Experiment(model,
-                                            n_epochs,
-                                            lr,
-                                            train_size,
-                                            val_size,
-                                            data,
-                                            class_first)
+        # data_size = experiment.get_train_size()
 
-                    experiment.fit()
-                    experiment = None
-                    model = None
-                #     err, acc = experiment.get_evaluate()
-                    
-                #     mean_data.append([experiment.save_losses_val()[-1],
-                #                     experiment.save_losses_train()[-1],
-                #                     experiment.save_acuraccys_val()[-1],
-                #                     experiment.save_acuraccys_train()[-1],
-                #                     err,
-                #                     acc])
-
-                #     data_size = experiment.get_train_size()
-
-                # write_file(path, data_size, exp, neurons, model, mean_data)
+        # write_file(path, data_size, exp, neurons, model, losses_acc)
+        experiment = None
+        model = None
+        print(f'{exp}/5')

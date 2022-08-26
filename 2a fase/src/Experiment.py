@@ -41,18 +41,18 @@ class Experiment():
         self.acuraccy_val = []
 
     def load_dataset(self):
-        tam = self.val_size/self.train_size
-        if tam > 1:
-            tam /= 10
+        tam = self.val_size/(1-self.train_size)
+
+        print(f'TRAIN SIZE {self.train_size} VAL SIZE {tam}')
         
         if self.class_first:
             x, y = self.data.iloc[:, 1:], self.data.iloc[:, :1]
         else:
             x, y = self.data.iloc[:, 1:], self.data.iloc[:, -1:]
 
-        x_train, xtest, y_train, ytest = train_test_split(x, y, train_size=self.val_size, shuffle=True, stratify=y)
+        x_train, xtest, y_train, ytest = train_test_split(x, y, train_size=self.train_size, shuffle=True, stratify=y)
         x_train, xtest = normalization(x_train, xtest)
-        x_val, x_test, y_val, y_test = train_test_split(x, y, train_size=tam, shuffle=True, stratify=y)
+        x_val, x_test, y_val, y_test = train_test_split(xtest, ytest, train_size=tam, shuffle=True, stratify=ytest)
         
         self.x_train = x_train
         self.y_train = y_train
@@ -60,6 +60,7 @@ class Experiment():
         self.y_val = y_val
         self.x_test = x_test
         self.y_test = y_test
+    
     @tf.function
     def train_step(self, x, y):
         with tf.GradientTape() as tape:
@@ -70,6 +71,7 @@ class Experiment():
         self.optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
         self.metric_train.update_state(y, pred)
         return err
+    
     @tf.function
     def val_step(self, x, y):
           pred = self.model(x, training=False)
@@ -121,7 +123,6 @@ class Experiment():
     def get_evaluate(self):
         pred = self.model(np.array(self.x_test), training=False)
         err = self.loss(np.array(self.y_test), pred).numpy()
-        err /= len(self.y_test)
 
         self.metric_test.update_state(np.array(self.y_test), pred)
         acc = self.metric_test.result().numpy()
@@ -153,4 +154,3 @@ class Experiment():
 
     def save_acuraccys_val(self):
         return self.acuraccy_val
-

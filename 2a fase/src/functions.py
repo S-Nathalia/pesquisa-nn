@@ -1,4 +1,6 @@
+from Model import count_weights
 from math import factorial
+import numpy as np
 
 def complex(net):
     complexity = 1
@@ -22,5 +24,34 @@ def normalization(train, test):
         test.iloc[:, i] = (test.iloc[:, i]-min_t)/(max_t-min_t)
 
     return train, test
+
+def write_file(path, experiment, array, string=''):
+    array = np.array(array)
+    data_size = experiment.get_train_size()
+    
+    if string == 'loss_val':
+        path += 'loss_val.csv'
+    elif string == 'loss_train':
+        path += 'loss_train.csv'
+    elif string == 'acc_val':
+        path += 'acc_train.csv'
+    elif string == 'loss_test':
+        path += 'loss_test.csv'
+    else:
+        path += 'acc_test.csv'
+
+    with open(path, 'a') as file:
+        file.write(f'ARQ{experiment.model.neurons},')
+        file.write(f'{experiment.model.neurons},')
+        file.write(f'{data_size},')
+        file.write(f'{count_weights(experiment.model)},')
+        # array = *1, *2, *3, *4, *5 
+        # *_M, *_DP
+        for i in range(5):
+            file.write(f'{array[i]},')
+        file.write(f'{array.sum()/len(array)},')
+        file.write(f'{np.std(array)}')
+        file.write('\n')
+        file.close()
 
 

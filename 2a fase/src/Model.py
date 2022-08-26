@@ -10,7 +10,7 @@ class Model(tf.keras.Model):
         self.shape = data.shape[1]-1
         self.num_layers = 0
         self.neurons = neurons
-        self.input_layer = tf.keras.layers.Dense(1, activation='relu', input_shape=(self.shape,))
+        self.input_layer = tf.keras.layers.Input(shape=(self.shape,))
         self.output_layer = tf.keras.layers.Dense(1, activation='sigmoid')
 
         self.neurons_layers = self.__calculate_layers()
@@ -32,8 +32,7 @@ class Model(tf.keras.Model):
             self.layers_model.add(tf.keras.layers.Dense(self.neurons_layers[lr], activation="relu"))
 
     def __call__(self, inputs, training=False):
-        x = self.input_layer(inputs)
-        x = self.layers_model(x)
+        x = self.layers_model(inputs)
         x = self.output_layer(x)
         return x
 
