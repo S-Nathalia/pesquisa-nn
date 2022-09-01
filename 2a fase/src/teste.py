@@ -1,17 +1,12 @@
-import numpy as np
+from functions import calculate_train_size as cal
 import pandas as pd
 
-def calculate_layers():
-    num_layers = neurons//shape
-    neurons_layers = np.ones(num_layers, dtype='uint8')*shape
+dia = pd.read_csv('../../data/diabetes.csv')
+data2 = pd.read_csv('../../data/heart.csv')
+data3 = data = pd.read_csv('../../data/water_potability.csv')
+qnt_data = 0
 
-    if(neurons%shape != 0):
-        num_layers += 1
-        neurons_layers = np.insert(neurons_layers, len(neurons_layers), neurons%shape)
+while qnt_data < 4000:
+    qnt_data += 300
+    print(cal(dia, qnt_data))
 
-    print(num_layers, neurons_layers, neurons_layers.sum())
-
-shape = 12
-neurons = 15
-
-calculate_layers()

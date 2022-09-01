@@ -13,6 +13,13 @@ def complex(net):
 
     return complexity
 
+def calculate_train_size(data, qnt_data):
+    rows = qnt_data/data.shape[1]-1
+    pct = (rows*100)/data.shape[0]
+    pct /= 100
+
+    return round(pct, 6)
+
 def normalization(train, test):
     features = (train.shape[1])
 
@@ -31,12 +38,19 @@ def write_file(path, experiment, array, string=''):
     
     if string == 'loss_val':
         path += 'loss_val.csv'
+
     elif string == 'loss_train':
         path += 'loss_train.csv'
-    elif string == 'acc_val':
-        path += 'acc_train.csv'
+
     elif string == 'loss_test':
         path += 'loss_test.csv'
+
+    elif string == 'acc_train':
+        path += 'acc_train.csv'
+    
+    elif string == 'acc_val':
+        path += 'acc_val.csv'
+
     else:
         path += 'acc_test.csv'
 

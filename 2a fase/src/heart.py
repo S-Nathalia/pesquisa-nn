@@ -1,23 +1,11 @@
+from functions import calculate_train_size as cal
 from sklearn import preprocessing
+from functions import write_file
 from Experiment import *
 import tensorflow as tf
 import pandas as pd
-import numpy as np
 from Model import *
-
-
-def write_file(path, data_size, exp, neurons, model, array):
-    array = np.array(array)
-    with open(path, 'a') as file:
-
-        file.write(f'{exp},')
-        file.write(f'{data_size},')
-        file.write(f'{model.neurons},')
-        file.write(f'{count_weights(model)},')
-        for i in range(6):
-            file.write(f'{array[:, i].sum()/len(array)},')
-        file.write('\n')
-        file.close()
+import numpy as np
 
 le = preprocessing.LabelEncoder()
 data = pd.read_csv('../../data/heart.csv')
@@ -28,49 +16,58 @@ for column in cols:
     data[column] = le.transform(data[column])
 
 cols2 = list(data.select_dtypes(include='float64'))
+path = '../results/experiments - heart 1 '
 
 if __name__ == "__main__":
 
-    qnt_experiments = 6
     val_size = 0.3
     n_repeat = 5
-    data_size = 0
-    path = '../results/experiments - heart 1.csv'
+    qnt_data = 0
 
-    for exp in range(1, qnt_experiments+1):
-        if exp%5 == 0 or exp == 1:
-            neurons = 1
+    for neurons in [256]:
 
-            for k in range(7):
-                neurons *= 2
-                mean_data = []
+        while(qnt_data < 12000):
+            qnt_data += 300
+            losses_val = []
+            losses_train = []
+            losses_test = []
+            acc_val = []
+            acc_train = []
+            acc_test = []
 
-                for rpt in range(n_repeat):
-                    tf.keras.backend.clear_session()
-                    model = Model(data, neurons)
-                    train_size = exp/10
-                    n_epochs = 50
-                    lr = 0.0001
-                    class_first = True
+            for n in range(n_repeat):
+                model = None
+                experiment = None
+                print(f'{n}/{n_repeat}')
+                print(losses_val)
 
-                    experiment = Experiment(model,
-                                            n_epochs,
-                                            lr,
-                                            train_size,
-                                            val_size,
-                                            data,
-                                            class_first)
+                tf.keras.backend.clear_session()
+                model = Model(data, neurons)
+                train_size = cal(data, qnt_data)
+                n_epochs = 50
+                lr = 0.0001
+                class_first = True
 
-                    experiment.fit()
-                    err, acc = experiment.get_evaluate()
-                    
-                    mean_data.append([experiment.save_losses_val()[-1],
-                                    experiment.save_losses_train()[-1],
-                                    experiment.save_acuraccys_val()[-1],
-                                    experiment.save_acuraccys_train()[-1],
-                                    err,
-                                    acc])
+                experiment = Experiment(model,
+                                        n_epochs,
+                                        lr,
+                                        train_size,
+                                        val_size,
+                                        data,
+                                        class_first)
 
-                    data_size = experiment.get_train_size()
+                experiment.fit()
+                
+                err, acc = experiment.get_evaluate()
+                
+                losses_val.append(experiment.save_losses_val()[-1])
+                losses_train.append(experiment.save_losses_train()[-1])
+                losses_test.append(err)
 
-                write_file(path, data_size, exp, neurons, model, mean_data)
+            # path, experiment, array, string=''
+            write_file(path, experiment, losses_val, string='loss_val')
+            write_file(path, experiment, losses_val, string='loss_train')
+            write_file(path, experiment, losses_val, string='loss_test')
+            write_file(path, experiment, losses_val, string='acc_val')
+            write_file(path, experiment, losses_val, string='acc_train')
+            write_file(path, experiment, losses_val, string='acc_test')
