@@ -3,7 +3,6 @@ from functions import normalization
 import matplotlib.pyplot as plt
 from Model import count_weights
 import tensorflow as tf
-tf.get_logger().setLevel('ERROR')
 import numpy as np
 import math
 
@@ -74,10 +73,10 @@ class Experiment():
     
     @tf.function
     def val_step(self, x, y):
-          pred = self.model(x, training=False)
-          err = self.loss(y, pred)
-          self.metric_val.update_state(y, pred)
-          return err
+        pred = self.model(x, training=False)
+        err = self.loss(y, pred)
+        self.metric_val.update_state(y, pred)
+        return err
 
     def fit(self):
         len_train = len(self.y_train)
@@ -88,16 +87,13 @@ class Experiment():
 
             for i in range(self.atualizations):
                 x, y = [], []
-                try: #definicao do batch size
-                    last_range = (i+1)*self.batch_size
-                    if (last_range >= len_train):
-                        x = self.x_train[i*self.batch_size:]
-                        y = self.y_train[i*self.batch_size:]
-                    else:
-                        x = self.x_train[i*self.batch_size:last_range]
-                        y = self.y_train[i*self.batch_size:last_range]
-                except:
-                    x, y = x_train, y_train
+                last_range = (i+1)*self.batch_size
+                if (last_range >= len_train):
+                    x = self.x_train[i*self.batch_size:]
+                    y = self.y_train[i*self.batch_size:]
+                else:
+                    x = self.x_train[i*self.batch_size:last_range]
+                    y = self.y_train[i*self.batch_size:last_range]
 
                 epoch_train_loss += self.train_step(np.array(x), np.array(y)).numpy()
 

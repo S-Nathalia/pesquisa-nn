@@ -68,4 +68,6 @@ def write_file(path, experiment, array, string=''):
         file.write('\n')
         file.close()
 
+    return 
+
 
