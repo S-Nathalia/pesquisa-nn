@@ -20,8 +20,8 @@ if __name__ == "__main__":
     for neurons in [2, 4, 8, 16, 32, 64, 128, 256]:
         qnt_data = 0
 
-        while(qnt_data < 12000):
-            qnt_data += 300
+        while(qnt_data < (len(data)*0.65)):
+            qnt_data += 50
             losses_val = []
             losses_train = []
             losses_test = []

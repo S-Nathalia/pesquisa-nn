@@ -1,7 +1,5 @@
 from sklearn.model_selection import train_test_split
 from functions import normalization
-import matplotlib.pyplot as plt
-from Model import count_weights
 import tensorflow as tf
 import numpy as np
 import math
@@ -12,7 +10,7 @@ tf.random.set_seed(seed_val)
 
 class Experiment():
 
-    def __init__(self, model, epochs, lr, train_size, val_size, data, class_first):
+    def __init__(self, model, epochs, lr, train_size, val_size, data, class_first, qnt_data):
         self.model = model
         self.n_epochs = epochs
         self.lr = lr
@@ -25,6 +23,7 @@ class Experiment():
         self.train_size = train_size
         self.val_size = val_size
         self.data = data
+        self.qnt_data = qnt_data
         self.class_first = class_first
         self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = None, None, None, None, None, None
         self.load_dataset()
@@ -41,8 +40,6 @@ class Experiment():
 
     def load_dataset(self):
         tam = self.val_size/(1-self.train_size)
-
-        print(f'TRAIN SIZE {self.train_size} VAL SIZE {tam}')
         
         if self.class_first:
             x, y = self.data.iloc[:, 1:], self.data.iloc[:, :1]
@@ -128,7 +125,7 @@ class Experiment():
         return err, acc
 
     def get_train_size(self):
-        return (self.x_train.shape[0])*((self.data.shape[1])-1)
+        return len(self.x_train)
 
     def get_proportion(self):
         if self.class_first:

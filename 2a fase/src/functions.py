@@ -14,9 +14,10 @@ def complex(net):
     return complexity
 
 def calculate_train_size(data, qnt_data):
-    rows = qnt_data/data.shape[1]-1
-    pct = (rows*100)/data.shape[0]
-    pct /= 100
+    # rows = qnt_data/data.shape[1]-1
+    # pct = (rows*100)/data.shape[0]
+    # pct /= 100
+    pct = qnt_data/len(data)
 
     return round(pct, 6)
 

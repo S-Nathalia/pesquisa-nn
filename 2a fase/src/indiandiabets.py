@@ -4,7 +4,6 @@ from Experiment import *
 import tensorflow as tf
 import pandas as pd
 from Model import *
-import numpy as np
 
 data = pd.read_csv('../../data/diabetes.csv')
 path = '../results/experiments - indian_diabets '
@@ -17,8 +16,8 @@ if __name__ == "__main__":
     for neurons in [2, 4, 8, 16, 32, 64, 128, 256]:
         qnt_data = 0
 
-        while(qnt_data < 4000):
-            qnt_data += 300
+        while (qnt_data < (len(data)*0.65)):
+            qnt_data += 50
             losses_val = []
             losses_train = []
             losses_test = []
@@ -45,7 +44,8 @@ if __name__ == "__main__":
                                         train_size,
                                         val_size,
                                         data,
-                                        class_first)
+                                        class_first,
+                                        qnt_data)
 
                 experiment.fit()
                 
