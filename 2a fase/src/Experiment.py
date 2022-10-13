@@ -10,7 +10,7 @@ tf.random.set_seed(seed_val)
 
 class Experiment():
 
-    def __init__(self, model, epochs, lr, train_size, val_size, data, class_first, qnt_data):
+    def __init__(self, model, epochs, lr, train_size, val_size, data, class_first):
         self.model = model
         self.n_epochs = epochs
         self.lr = lr
@@ -23,7 +23,6 @@ class Experiment():
         self.train_size = train_size
         self.val_size = val_size
         self.data = data
-        self.qnt_data = qnt_data
         self.class_first = class_first
         self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = None, None, None, None, None, None
         self.load_dataset()
@@ -40,6 +39,8 @@ class Experiment():
 
     def load_dataset(self):
         tam = self.val_size/(1-self.train_size)
+        if tam > 1.0:
+            tam = tam/2
         
         if self.class_first:
             x, y = self.data.iloc[:, 1:], self.data.iloc[:, :1]
