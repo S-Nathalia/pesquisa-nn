@@ -12,12 +12,13 @@ if __name__ == "__main__":
 
     val_size = 0.3
     n_repeat = 5
+    samples = [500]
 
-    for neurons in [2, 4, 8, 16, 32, 64, 128, 256]:
+    for neurons in [2, 8, 16, 32, 64, 128, 256]:
         qnt_data = 0
 
         while (qnt_data < (len(data)*0.65)):
-            qnt_data += 50
+            qnt_data = 500
             losses_val = []
             losses_train = []
             losses_test = []
@@ -44,8 +45,7 @@ if __name__ == "__main__":
                                         train_size,
                                         val_size,
                                         data,
-                                        class_first,
-                                        qnt_data)
+                                        class_first)
 
                 experiment.fit()
                 

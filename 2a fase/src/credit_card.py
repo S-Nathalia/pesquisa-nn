@@ -15,11 +15,12 @@ data[['fea_2']] = (imp.transform(data[['fea_2']]))
 path = '../results/experiments - credit card '
 
 if __name__ == "__main__":
+    dados = [599, 650, 699, 750]
 
     val_size = 0.3
     n_repeat = 5
 
-    for neurons in [2, 4, 8, 16, 32, 64, 128, 256]:
+    for neurons in [2, 8, 16, 32, 64, 128, 256]:
         qnt_data = 0
 
         while(qnt_data < (len(data)*0.65)):

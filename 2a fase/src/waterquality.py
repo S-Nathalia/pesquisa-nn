@@ -16,8 +16,7 @@ if __name__ == "__main__":
     val_size = 0.3
     n_repeat = 5
 
-
-    for neurons in [2, 4, 8, 16, 32, 64, 128, 256]:
+    for neurons in [400, 450, 500, 550, 600]:
         qnt_data = 0
 
         while(qnt_data < (len(data)*0.65)):
