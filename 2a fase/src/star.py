@@ -1,5 +1,6 @@
 from functions import calculate_train_size as cal
 from functions import write_file
+from functions import load_dataset
 from Experiment import *
 import tensorflow as tf
 import pandas as pd
@@ -12,12 +13,18 @@ if __name__ == "__main__":
 
     val_size = 0.3
     n_repeat = 5
+    qnt_data = 0
+    x_train, y_train, x_val, y_val, x_test, y_test = None, None, None, None, None, None
 
-    for neurons in [350, 400, 450, 500, 550, 600]:
-        qnt_data = 0
+    while (qnt_data < (len(data)*0.65)):
+        qnt_data += 50
+        class_first = False
+        train_size = cal(data, qnt_data)
+        change_samples = False
+        x_train, y_train, x_val, y_val, x_test, y_test = load_dataset(
+            class_first, change_samples, data, val_size, train_size, qnt_data)
 
-        while (qnt_data < (len(data)*0.50)):
-            qnt_data += 50
+        for neurons in [2, 4, 8, 16, 64, 128, 256, 300, 350, 400, 450, 500, 550, 600]:
             losses_val = []
             losses_train = []
             losses_test = []
@@ -26,17 +33,16 @@ if __name__ == "__main__":
             acc_test = []
 
             for n in range(n_repeat):
+                tf.keras.backend.clear_session()
                 model = None
                 experiment = None
-                print(f'{n}/{n_repeat}')
-                print(losses_val)
-
-                tf.keras.backend.clear_session()
                 model = Model(data, neurons)
-                train_size = cal(data, qnt_data)
                 n_epochs = 50
                 lr = 0.0001
-                class_first = False
+                change_samples = True
+                x_train, y_train, x_val, y_val, x_test, y_test = load_dataset(
+                    class_first, change_samples, data, val_size, train_size, qnt_data,
+                    x_train, y_train, x_val, y_val, x_test, y_test)
 
                 experiment = Experiment(model,
                                         n_epochs,
@@ -44,7 +50,8 @@ if __name__ == "__main__":
                                         train_size,
                                         val_size,
                                         data,
-                                        class_first)
+                                        class_first,
+                                        x_train, y_train, x_val, y_val, x_test, y_test)
 
                 experiment.fit()
 

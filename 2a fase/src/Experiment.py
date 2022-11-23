@@ -10,9 +10,16 @@ tf.random.set_seed(seed_val)
 
 class Experiment():
 
-    def __init__(self, model, epochs, lr, train_size, val_size, data, class_first):
+    def __init__(self, model,
+                 n_epochs,
+                 lr,
+                 train_size,
+                 val_size,
+                 data,
+                 class_first,
+                 x_train, y_train, x_val, y_val, x_test, y_test):
         self.model = model
-        self.n_epochs = epochs
+        self.n_epochs = n_epochs
         self.lr = lr
         self.loss = tf.keras.losses.BinaryCrossentropy(reduction=tf.keras.losses.Reduction.SUM_OVER_BATCH_SIZE)
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
@@ -20,12 +27,11 @@ class Experiment():
         self.metric_train = tf.keras.metrics.BinaryAccuracy()
         self.metric_test = tf.keras.metrics.BinaryAccuracy()
 
-        self.train_size = train_size
-        self.val_size = val_size
+        # self.train_size = train_size
+        # self.val_size = val_size
         self.data = data
         self.class_first = class_first
-        self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = None, None, None, None, None, None
-        self.load_dataset()
+        self.x_train, self.x_val, self.x_test, self.y_train, self.y_val, self.y_test = x_train, x_val, x_test, y_train, y_val, y_test
         self.batch_size = len(self.x_train)//100
         try:
             self.atualizations = math.ceil(len(self.y_train)/self.batch_size)
@@ -36,27 +42,6 @@ class Experiment():
         self.acuraccy_train = []
         self.losses_val = []
         self.acuraccy_val = []
-
-    def load_dataset(self):
-        tam = self.val_size/(1-self.train_size)
-        if tam > 1.0:
-            tam = tam/2
-        
-        if self.class_first:
-            x, y = self.data.iloc[:, 1:], self.data.iloc[:, :1]
-        else:
-            x, y = self.data.iloc[:, 1:], self.data.iloc[:, -1:]
-
-        x_train, xtest, y_train, ytest = train_test_split(x, y, train_size=self.train_size, shuffle=True, stratify=y)
-        x_train, xtest = normalization(x_train, xtest)
-        x_val, x_test, y_val, y_test = train_test_split(xtest, ytest, train_size=tam, shuffle=True, stratify=ytest)
-        
-        self.x_train = x_train
-        self.y_train = y_train
-        self.x_val = x_val
-        self.y_val = y_val
-        self.x_test = x_test
-        self.y_test = y_test
     
     @tf.function
     def train_step(self, x, y):

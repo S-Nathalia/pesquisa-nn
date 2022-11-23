@@ -1,3 +1,4 @@
+from sklearn.model_selection import train_test_split
 from Model import count_weights
 from math import factorial
 import numpy as np
@@ -32,6 +33,41 @@ def normalization(train, test):
         test.iloc[:, i] = (test.iloc[:, i]-min_t)/(max_t-min_t)
 
     return train, test
+
+def unison_shuffled_copies(a, b):
+    a = np.array(a)
+    b = np.array(b)
+    assert len(a) == len(b)
+    p = np.random.permutation(len(a))
+    return a[p], b[p]
+
+
+def load_dataset(class_first, change_data, data, val_size, train_size, train_samples, 
+                 x_train=None, y_train=None, x_val=None, y_val=None, x_test=None, y_test=None):
+    if(not change_data):
+        tam = val_size/(1-train_size)
+        if tam > 1.0:
+            tam = 0.29
+
+        if class_first:
+            x, y = data.iloc[:, 1:], data.iloc[:, :1]
+        else:
+            x, y = data.iloc[:, 1:], data.iloc[:, -1:]
+
+        x_train, xtest, y_train, ytest = train_test_split(
+            x, y, train_size=train_samples, shuffle=True, stratify=y)
+        x_train, xtest = normalization(x_train, xtest)
+        x_val, x_test, y_val, y_test = train_test_split(
+            xtest, ytest, train_size=tam, shuffle=True, stratify=ytest)
+
+    else:
+        x_train, y_train = unison_shuffled_copies(x_train, y_train)
+        x_val, y_val = unison_shuffled_copies(x_val, y_val)
+        x_test, y_test = unison_shuffled_copies(x_test, y_test)
+
+    
+    return x_train, y_train, x_val, y_val, x_test, y_test
+
 
 def write_file(path, experiment, array, string=''):
     array = np.array(array)
