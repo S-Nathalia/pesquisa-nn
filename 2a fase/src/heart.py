@@ -26,7 +26,7 @@ if __name__ == "__main__":
     qnt_data = 0
     x_train, y_train, x_val, y_val, x_test, y_test = None, None, None, None, None, None
 
-    while (qnt_data < (len(data)*0.65)):
+    while (qnt_data < (len(data)*0.01)):
         qnt_data += 50
         class_first = True
         train_size = cal(data, qnt_data)

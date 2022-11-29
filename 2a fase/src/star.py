@@ -5,6 +5,8 @@ from Experiment import *
 import tensorflow as tf
 import pandas as pd
 from Model import *
+# python3 heart.py & & python3 indiandiabets.py & & python3 neo.py python3 star.py & & python3 wine.py
+
 
 data = pd.read_csv('../../data/star_att.csv')
 path = '../results/experiments - star '
@@ -13,10 +15,10 @@ if __name__ == "__main__":
 
     val_size = 0.3
     n_repeat = 5
-    qnt_data = 0
+    qnt_data = 1500
     x_train, y_train, x_val, y_val, x_test, y_test = None, None, None, None, None, None
 
-    while (qnt_data < (len(data)*0.65)):
+    while (qnt_data < 1550):
         qnt_data += 50
         class_first = False
         train_size = cal(data, qnt_data)
@@ -24,7 +26,7 @@ if __name__ == "__main__":
         x_train, y_train, x_val, y_val, x_test, y_test = load_dataset(
             class_first, change_samples, data, val_size, train_size, qnt_data)
 
-        for neurons in [2, 4, 8, 16, 64, 128, 256, 300, 350, 400, 450, 500, 550, 600]:
+        for neurons in [500, 550, 600]:
             losses_val = []
             losses_train = []
             losses_test = []

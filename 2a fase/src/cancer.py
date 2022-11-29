@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     val_size = 0.3
     n_repeat = 5
-    qnt_data = 350
+    qnt_data = 0
     x_train, y_train, x_val, y_val, x_test, y_test = None, None, None, None, None, None
 
     while (qnt_data < (len(data)*0.65)):
